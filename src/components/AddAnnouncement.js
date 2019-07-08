@@ -192,7 +192,16 @@ export class AddAnnouncement extends Component {
                 <option className="city-option">Новосибирск</option>
             </select>
             <br />
-            <button id="attach-photo-btn"><div id="attach-photo-btn-text">Прикрепить фото</div></button><br />
+            <button
+                id="attach-photo-btn"
+                onClick={ev => {
+                    ev.preventDefault()
+                    alert('Не реализовано:(') 
+                }}
+                >
+                    <div id="attach-photo-btn-text">Прикрепить фото</div>
+                </button>
+                <br />
             <button 
                 id="send-btn"
                 onClick={ev => {
