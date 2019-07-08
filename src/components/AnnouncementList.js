@@ -17,22 +17,40 @@ export class AnnouncementList extends Component {
     ]
   }
 
-  addAnnouncementHandler = (name, description, tel, city) => {
-    const newAnnouncement = {
-      id: uuidv4(),
-      name,
-      description,
-      tel,
-      city
+  componentDidMount() {
+    if (localStorage.getItem('localState')) {
+        const storageDate = JSON.parse(localStorage.getItem('localState'));
+        const { announcements } = storageDate;
+        this.setState({ announcements });
     }
-    let announcements = [...this.state.announcements];
-    announcements = [
-      newAnnouncement,
-      ...announcements
-    ]
+}
 
-    this.setState({ announcements });
-    
+  addAnnouncementHandler = (name, description, tel, city) => {
+    if (name && description && tel ) {
+      const newAnnouncement = {
+        id: uuidv4(),
+        name,
+        description,
+        tel,
+        city
+      }
+      let announcements = [...this.state.announcements];
+      announcements = [
+        newAnnouncement,
+        ...announcements
+      ]
+
+      this.setState({ announcements });
+      console.log(this.state);
+
+      let storage = JSON.stringify(this.state);
+      localStorage.setItem('localState', storage);
+
+      document.getElementById('announcement-name').value = '';
+      document.getElementById('announcement-text').value = '';
+      document.getElementById('tel').value = '';
+      document.getElementById('city-select').value = '';
+    }
   }
 
   removeAnnouncementHandler = id => {
@@ -44,6 +62,10 @@ export class AnnouncementList extends Component {
     })
 
     this.setState({ announcements });
+    console.log(this.state);
+    
+    let storage = JSON.stringify(this.state);
+    localStorage.setItem('localState', storage);
   }
 
   render() {

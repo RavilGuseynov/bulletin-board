@@ -96,10 +96,9 @@ form {
     margin-bottom: 35px;
   }
 
-  .city-select {
+  #city-select {
     width: 410px;
     height: 36px;
-    object-fit: contain;
     border-radius: 3px;
     border: solid 1px #d4d8db;
     background-color: #ffffff;
