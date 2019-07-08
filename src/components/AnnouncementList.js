@@ -41,7 +41,6 @@ export class AnnouncementList extends Component {
       ]
 
       this.setState({ announcements });
-      console.log(this.state);
 
       let storage = JSON.stringify(this.state);
       localStorage.setItem('localState', storage);
@@ -62,7 +61,6 @@ export class AnnouncementList extends Component {
     })
 
     this.setState({ announcements });
-    console.log(this.state);
     
     let storage = JSON.stringify(this.state);
     localStorage.setItem('localState', storage);

@@ -59,7 +59,6 @@ export class AddAnnouncement extends Component {
 
             this.setState({ form });
             this.setState({ areaStatus });
-            console.log(this.state);
             
         }
     }
