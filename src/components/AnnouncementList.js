@@ -17,13 +17,13 @@ export class AnnouncementList extends Component {
     ]
   }
 
-  componentDidMount() {
+  componentWillMount() {
     if (localStorage.getItem('localState')) {
         const storageDate = JSON.parse(localStorage.getItem('localState'));
         const { announcements } = storageDate;
         this.setState({ announcements });
     }
-}
+  }
 
   addAnnouncementHandler = (name, description, tel, city) => {
     if (name && description && tel ) {
@@ -37,18 +37,14 @@ export class AnnouncementList extends Component {
       let announcements = [...this.state.announcements];
       announcements = [
         newAnnouncement,
-        ...announcements
+        ...this.state.announcements
       ]
 
-      this.setState({ announcements });
+      this.setState({ announcements }, function() {
+        let storage = JSON.stringify(this.state);
+        localStorage.setItem('localState', storage);
+      });
 
-      let storage = JSON.stringify(this.state);
-      localStorage.setItem('localState', storage);
-
-      document.getElementById('announcement-name').value = '';
-      document.getElementById('announcement-text').value = '';
-      document.getElementById('tel').value = '';
-      document.getElementById('city-select').value = '';
     }
   }
 
@@ -60,10 +56,11 @@ export class AnnouncementList extends Component {
       }
     })
 
-    this.setState({ announcements });
+    this.setState({ announcements }, function() {
+      let storage = JSON.stringify(this.state);
+      localStorage.setItem('localState', storage);
+    });
     
-    let storage = JSON.stringify(this.state);
-    localStorage.setItem('localState', storage);
   }
 
   render() {

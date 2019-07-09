@@ -13,7 +13,7 @@ export class AddAnnouncement extends Component {
         areaStatus: {
             nameAreaStatus: 'EMPTY', // 'COMPLETED', 'NOT_FILLED'
             textAreaStatus: 'EMPTY', // 'COMPLETED', 'NOT_FILLED'
-            telAreaStatus: 'EMPTY', // 'COMPLETED', 'INCORRECT'
+            telAreaStatus: 'EMPTY', // 'COMPLETED', 'INCORRECT', 'NOT_FILLED'
             cityAreaStatus: 'EMPTY' // 'COMPLETED', 'NOT_FILLED'
         }
     }
@@ -23,57 +23,77 @@ export class AddAnnouncement extends Component {
         let areaStatus = {...this.state.areaStatus};
         form[area] = newValue;
         areaStatus[areaStatusValue] = 'EMPTY';
-        this.setState({ form });
-        this.setState({ areaStatus });        
+        this.setState({ form, areaStatus });
     }
 
     validateArea = (areaValue, currentAreaStatus) => {
         let areaStatus = {...this.state.areaStatus};
-        if (areaValue > '') {
+        if (areaValue) {            
             areaStatus[currentAreaStatus] = 'COMPLETED';
-            this.setState({ areaStatus });
         }
-        else if (areaValue === '') {
+        else if (!areaValue) {
             areaStatus[currentAreaStatus] = 'NOT_FILLED';
-            this.setState({ areaStatus });
         }
+        this.setState( { areaStatus } );
+    }
+
+    validateTelArea = () => {
+        const tel = document.getElementById('tel').value;
+        let areaStatus = {...this.state.areaStatus};
+        if (/^\+?[78][-\(]?\d{3}\)?-?\d{3}-?\d{2}-?\d{2}$/.test(tel)) {            
+            areaStatus.telAreaStatus = 'COMPLETED';
+        }
+        else if (tel.length === 0) {
+            areaStatus.telAreaStatus = 'NOT_FILLED';
+        }
+        else {
+            areaStatus.telAreaStatus = 'INCORRECT'
+        }
+        this.setState({ areaStatus });
+    }
+
+    checkAllFields = (name, text, tel) => {
+        const areaStatus = {...this.state.areaStatus};
+
+        if (!name) {
+            areaStatus.nameAreaStatus = 'NOT_FILLED';
+        }
+        if (!text) {
+            areaStatus.textAreaStatus = 'NOT_FILLED'
+        } 
+        if ( !tel ) {
+            areaStatus.telAreaStatus = 'NOT_FILLED'
+        }
+
+        this.setState({ areaStatus });
     }
 
     setStateToDefault = () => {
-        const { name, description, tel } = this.state.form;
-        if (name && description && tel ) {
-            let form  = {...this.state.form};
-            let areaStatus = {...this.state.areaStatus};
-            form = {
-                name: '',
-                text: '',
-                tel: '',
+
+        const { name, text, tel } = this.state.form;
+        if (name && text && tel ) {
+
+            document.getElementById('announcement-name').value = '';
+            document.getElementById('announcement-text').value = '';
+            document.getElementById('tel').value = '';
+            document.getElementById('city-select').value = '';
+            
+            const form = {
+                name: '', 
+                text: '', 
+                tel: '', 
                 city: ''
-            };
-            areaStatus = {
+            }
+            const areaStatus = {
                 nameAreaStatus: 'EMPTY', 
                 textAreaStatus: 'EMPTY', 
                 telAreaStatus: 'EMPTY', 
                 cityAreaStatus: 'EMPTY'
             };
 
-            this.setState({ form });
-            this.setState({ areaStatus });
             
-        }
-    }
-
-    validateTelArea = () => {
-        const tel = document.getElementById('tel').value;
-        if (/^\+?[78][-\(]?\d{3}\)?-?\d{3}-?\d{2}-?\d{2}$/.test(tel)) {
-            let areaStatus = {...this.state.areaStatus};
-            areaStatus.telAreaStatus = 'COMPLETED';
-            this.setState({ areaStatus });
-        }
-        else {
-            let areaStatus = {...this.state.areaStatus};
-            areaStatus.telAreaStatus = 'INCORRECT'
-            this.setState({ areaStatus });
+            this.setState( { form, areaStatus } );
+            
         }
     }
 
@@ -131,7 +151,7 @@ export class AddAnnouncement extends Component {
                 name="" 
                 id="announcement-text"
                 onChange={() => {
-                    this.preFillState('text', document.getElementById('announcement-text').value, 'textAreaStatus')
+                    this.preFillState('text', document.getElementById('announcement-text').value, 'textAreaStatus');
                 }}
                 onBlur={() => {
                     this.validateArea(this.state.form.text, 'textAreaStatus');                  
@@ -172,7 +192,7 @@ export class AddAnnouncement extends Component {
                 id="city-select" 
                 type="text"
                 onChange={() => {
-                    this.preFillState('city', document.getElementById('city-select').value);
+                    this.preFillState('city', document.getElementById('city-select').value, 'cityAreaStatus');
                 }}
             >
                 <option className="city-option"></option>
@@ -205,11 +225,11 @@ export class AddAnnouncement extends Component {
             <button 
                 id="send-btn"
                 onClick={ev => {
-                    ev.preventDefault()
-                    this.validateArea(this.state.form.name, 'nameAreaStatus');
-                    this.validateArea(this.state.form.text, 'textAreaStatus');
-                    this.validateArea(this.state.form.tel, 'telAreaStatus')
-                    const { name, text, tel, city } = this.state.form;                    
+                    ev.preventDefault()                    
+                    
+                    const { name, text, tel, city } = this.state.form; 
+                    this.checkAllFields(name, text, tel);
+                                    
                     addAnnouncement(name, text, tel, city);
                     this.setStateToDefault();
                 }}
